@@ -1,0 +1,35 @@
+{
+  "name": "direcsdk-js",
+  "version": "0.0.1",
+  "description": "Direc query SDK for Javascript",
+  "main": "./dist/direcbase.mjs",
+  "module": "./dist/direcbase.mjs",
+  "type": "module",
+  "scripts": {
+    "test": "jest --detectOpenHandles --collectCoverage",
+    "build": "rm -rf dist && rollup -c"
+  },
+  "exports": {
+    ".": "./dist/direcbase.mjs",
+    "./cjs": "./dist/direcbase.cjs",
+    "./package.json": "./package.json"
+  },
+  "keywords": [
+    "direcbase",
+    "api",
+    "query"
+  ],
+  "author": "Hau Le",
+  "license": "",
+  "dependencies": {
+    "array-flatten": "^3.0.0",
+    "eventsource": "^2.0.2"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^24.0.1",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-terser": "^0.4.0",
+    "jest": "^29.3.1",
+    "rollup": "^3.13.0"
+  }
+}
