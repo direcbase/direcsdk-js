@@ -44,7 +44,7 @@ const result = await ds.select().from('table_name')
         // data changes handling logic here
     })                         
 ```
-=> onChange method is applied for the purpose of listening to data changes in reatime 
+> onChange method is applied for the purpose of listening to data changes in reatime 
 
 Insert query
 ```js
@@ -72,18 +72,18 @@ Import admin module
 import { direcadmin as da} from 'direcbase';
 ```
 ### List of methods
-- Model admin
-    editModel: create or delete a data model (table/view definition)
-    editRules: edit data access rules select/insert/edit/delete for each data model
-    deleteModel: delete a data model
-- User admin
-    createUser: create user
-    editUser: edit user data
-    deleteUser: delete user
-    resetUserPwd: reset user password
-- System admin
-    getMetrics: get system statistics
-    getEnv: get environment parameters
-    setEnv: set environment parameters
+- Model admin methods
+    - editModel: create or delete a data model (table/view definition)
+    - editRules: edit data access rules select/insert/edit/delete for each data model
+    - deleteModel: delete a data model
+- User admin methods
+    - createUser: create user
+    - editUser: edit user data
+    - deleteUser: delete user
+    - resetUserPwd: reset user password
+- System admin methods
+    - getMetrics: get system statistics
+    - getEnv: get environment parameters
+    - setEnv: set environment parameters
 ## DirecFile - file storage APIs
 Coming soon
