@@ -6,7 +6,7 @@
   "module": "./dist/direcbase.mjs",
   "type": "module",
   "scripts": {
-    "test": "jest --detectOpenHandles --collectCoverage",
+    "test": "jest --detectOpenHandles",
     "build": "rm -rf dist && rollup -c"
   },
   "exports": {
