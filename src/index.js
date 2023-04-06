@@ -263,6 +263,12 @@ class Client {
             throw new Error('Subscribe function only supports select query');
         }
         const events = new EventSource(url);
+        events.onopen = (event) => {
+            //console.log(event);
+        };
+        events.onerror = (event) => {
+            //console.log(event);
+        };
         events.onmessage = (event) => {
             //console.log(event);
             const parsedData = JSON.parse(event.data);
@@ -276,10 +282,10 @@ class Client {
         return result;
     }
 
-    async subscribe(query, cb){
+    async subscribe(query, cb, sub){
         let path =  `sub/${query.coll}`  ;
         let params = {
-            sub: {on: true},
+            sub: sub || {},
             dql: query
         }
         this.onEvent(path, params, cb);
