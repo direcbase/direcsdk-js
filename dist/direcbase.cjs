@@ -173,8 +173,9 @@ class Select extends Query{
         return this;
     };
 
-    onChange(cb){
+    onChange(cb, sub){
         this.cb = cb;
+        this.sub = sub;
         return this;
     }
 }
@@ -302,10 +303,10 @@ class Client {
         return result;
     }
 
-    async subscribe(query, cb, sub){
+    async subscribe(query, cb){
         let path =  `sub/${query.coll}`  ;
         let params = {
-            sub: sub || {},
+            sub: query.sub || {},
             dql: query
         };
         this.onEvent(path, params, cb);
