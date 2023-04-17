@@ -1,6 +1,8 @@
 // rollup.config.js
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
+import babel from "@rollup/plugin-babel";
+const extensions = [".js", ".ts"];
 
 const isProduction = process.env.NODE_ENV === 'production';
 export default [
@@ -10,11 +12,12 @@ export default [
     
         output: {
             file: './dist/direcbase.cjs',
-            format: 'cjs'
+            format: 'cjs',
         },  
         plugins: [
             resolve(),
             commonjs(),
+            babel({ babelHelpers: "bundled", extensions }),
             isProduction && (await import('@rollup/plugin-terser')).default()
             ]
     },
@@ -27,6 +30,7 @@ export default [
             plugins: [
                 resolve(),
                 commonjs(),
+                babel({ babelHelpers: "bundled", extensions }),
                 isProduction && (await import('@rollup/plugin-terser')).default()
             ]
         }

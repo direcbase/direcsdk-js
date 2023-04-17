@@ -427,8 +427,21 @@ const UPDATE = function(...args){
 const DELETE = function(...args){
     return new Delete(...args);
 };
+
+class Direccall extends Direcbase{
+
+    constructor(){
+        const runner = new FnRunner();
+        super(runner);
+    }
+
+    async run(fxname, body, headers){
+        return await this.runner.run(`fx/${fxname}`, body, headers);
+    }
+}
 const direcstore = new Direcstore(); 
 const direcadmin = new Direcadmin();
 const direcauth = new Direcauth();
+const direccall = new Direccall();
 
-export { DELETE, INSERT, SELECT, UPDATE, direcadmin, direcauth, direcstore };
+export { DELETE, INSERT, SELECT, UPDATE, direcadmin, direcauth, direccall, direcstore };
