@@ -56,9 +56,9 @@ class QueryRunner{
                     let query = Object.assign({}, this);
                     delete query.then;
                     if(this.cb){
-                        response = await this.client.subscribe(query,query.cb, query.context);
+                        response = await this.client.subscribe(query);
                     } else {                    
-                        response = await this.client.run(query, query.context);
+                        response = await this.client.run(query);
                     }
                     return response;
                 } else {
@@ -81,10 +81,9 @@ class FnRunner{
     }
 }
 class Query{
-    /*
-    then(resolve, reject){
-        resolve(Object.assign({}, this));
-    }*/
+    constructor(){
+
+    }
 }
 class Select extends Query{
     constructor() {
@@ -272,6 +271,7 @@ class Client {
             const parsedData = JSON.parse(event.data);
             cb(parsedData);
         };
+        return events;
     }
 
     async run(query, headers){
@@ -280,19 +280,20 @@ class Client {
         return result;
     }
 
-    async subscribe(query, cb){
+    async subscribe(query){
         let path =  `sub/${query.coll}`  ;
         let params = {
             sub: query.sub || {},
             dql: query
         };
-        this.onEvent(path, params, cb);
+        return await this.onEvent(path, params, query.cb);
     }
 }
 class Direcbase{
-    constructor(runner){
+    constructor(runner, context){
         if(!runner) this.runner = new QueryRunner();
         else this.runner = runner;
+        if(context) this.context = context;
     }
 
     useRunner(runner){
@@ -312,20 +313,20 @@ class Direcbase{
 }
 class Direcstore extends Direcbase{
 
-    constructor(runner = new QueryRunner()){
-        super(runner);
+    constructor(runner = new QueryRunner(), context){
+        super(runner, context);
     }
 
-    assignRunner(query, context){
+    assignRunner(query){
         Object.assign(query, this.runner);
         query.then = this.runner.then;
         query.getPromise = this.runner.getPromise;
-        query.context = context || this.runner.context || {};
+        query.context = this.context || {};
         return query;
     }
 
-    run(query, context){
-        return this.assignRunner(query, context);
+    run(query){
+        return this.assignRunner(query);
     }
 
     select(...args){
@@ -444,4 +445,4 @@ const direcadmin = new Direcadmin();
 const direcauth = new Direcauth();
 const direccall = new Direccall();
 
-export { DELETE, INSERT, SELECT, UPDATE, direcadmin, direcauth, direccall, direcstore };
+export { DELETE, Direcadmin, Direcauth, Direccall, Direcstore, FnRunner, INSERT, QueryRunner, SELECT, UPDATE, direcadmin, direcauth, direccall, direcstore };

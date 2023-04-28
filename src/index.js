@@ -42,7 +42,7 @@ function validLimit(rows){
     }
     return true;
 }
-class QueryRunner{
+export class QueryRunner{
     constructor(client = new Client()){
         this.client = client;
     }
@@ -59,9 +59,9 @@ class QueryRunner{
                     let query = Object.assign({}, this)
                     delete query.then;
                     if(this.cb){
-                        response = await this.client.subscribe(query,query.cb, query.context);
+                        response = await this.client.subscribe(query);
                     } else {                    
-                        response = await this.client.run(query, query.context);
+                        response = await this.client.run(query);
                     }
                     return response;
                 } else {
@@ -72,7 +72,7 @@ class QueryRunner{
         return this.innerPromise;
     }
 }
-class FnRunner{
+export class FnRunner{
     constructor(client = new Client()){
         this.client = client;
     }
@@ -84,10 +84,9 @@ class FnRunner{
     }
 }
 class Query{
-    /*
-    then(resolve, reject){
-        resolve(Object.assign({}, this));
-    }*/
+    constructor(){
+
+    }
 }
 class Select extends Query{
     constructor() {
@@ -275,6 +274,7 @@ class Client {
             const parsedData = JSON.parse(event.data);
             cb(parsedData);
         };
+        return events;
     }
 
     async run(query, headers){
@@ -283,19 +283,20 @@ class Client {
         return result;
     }
 
-    async subscribe(query, cb){
+    async subscribe(query){
         let path =  `sub/${query.coll}`  ;
         let params = {
             sub: query.sub || {},
             dql: query
         }
-        this.onEvent(path, params, cb);
+        return await this.onEvent(path, params, query.cb);
     }
 }
 class Direcbase{
-    constructor(runner){
+    constructor(runner, context){
         if(!runner) this.runner = new QueryRunner();
         else this.runner = runner;
+        if(context) this.context = context;
     }
 
     useRunner(runner){
@@ -313,22 +314,22 @@ class Direcbase{
         this.runner.client = client;
     }
 }
-class Direcstore extends Direcbase{
+export class Direcstore extends Direcbase{
 
-    constructor(runner = new QueryRunner()){
-        super(runner);
+    constructor(runner = new QueryRunner(), context){
+        super(runner, context);
     }
 
-    assignRunner(query, context){
+    assignRunner(query){
         Object.assign(query, this.runner);
         query.then = this.runner.then;
         query.getPromise = this.runner.getPromise;
-        query.context = context || this.runner.context || {};
+        query.context = this.context || {};
         return query;
     }
 
-    run(query, context){
-        return this.assignRunner(query, context);
+    run(query){
+        return this.assignRunner(query);
     }
 
     select(...args){
@@ -345,7 +346,7 @@ class Direcstore extends Direcbase{
     }
 }
 
-class Direcauth extends Direcbase{
+export class Direcauth extends Direcbase{
 
     
     constructor(){
@@ -380,7 +381,7 @@ class Direcauth extends Direcbase{
     }
 
 }
-class Direcadmin extends Direcbase{
+export class Direcadmin extends Direcbase{
 
     constructor(){
         const runner = new FnRunner();
@@ -431,7 +432,7 @@ export const DELETE = function(...args){
     return new Delete(...args);
 }
 
-class Direccall extends Direcbase{
+export class Direccall extends Direcbase{
 
     constructor(){
         const runner = new FnRunner();
@@ -446,4 +447,3 @@ export const direcstore = new Direcstore();
 export const direcadmin = new Direcadmin();
 export const direcauth = new Direcauth();
 export const direccall = new Direccall();
-
