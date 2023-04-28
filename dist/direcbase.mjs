@@ -345,10 +345,10 @@ class Direcstore extends Direcbase{
 
 class Direcauth extends Direcbase{
 
-    
-    constructor(){
-        const runner = new FnRunner();
-        super(runner);
+    constructor(runner) {
+        let initRunner;
+        if (!runner) initRunner = new FnRunner();else initRunner = runner;
+        super(initRunner);
     }
     
     async login(body, headers){
@@ -380,9 +380,10 @@ class Direcauth extends Direcbase{
 }
 class Direcadmin extends Direcbase{
 
-    constructor(){
-        const runner = new FnRunner();
-        super(runner);
+    constructor(runner) {
+        let initRunner;
+        if (!runner) initRunner = new FnRunner();else initRunner = runner;
+        super(initRunner);
     }
 
     async editModel(body, headers){
@@ -430,10 +431,10 @@ const DELETE = function(...args){
 };
 
 class Direccall extends Direcbase{
-
-    constructor(){
-        const runner = new FnRunner();
-        super(runner);
+    constructor(runner) {
+        let initRunner;
+        if (!runner) initRunner = new FnRunner();else initRunner = runner;
+        super(initRunner);
     }
 
     async run(fxname, body, headers){
