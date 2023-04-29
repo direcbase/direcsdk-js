@@ -382,10 +382,19 @@ class Direcauth extends Direcbase {
   }
 }
 class Direcadmin extends Direcbase {
-  constructor(runner) {
+  constructor(runner, context) {
     let initRunner;
     if (!runner) initRunner = new FnRunner();else initRunner = runner;
-    super(initRunner);
+    super(initRunner, context);
+  }
+  async createChange(body, headers) {
+    return await this.runner.run('adm/change', body, headers);
+  }
+  async deployChange(body, headers) {
+    return await this.runner.run('adm/change/deploy', body, headers);
+  }
+  async codegen(body, headers) {
+    return await this.runner.run('adm/schema/codegen', body, headers);
   }
   async editModel(body, headers) {
     return await this.runner.run('adm/schema', body, headers);
