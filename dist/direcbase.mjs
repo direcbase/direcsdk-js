@@ -265,11 +265,26 @@ class Client {
         };
         events.onerror = (event) => {
             //console.log(event);
+            try{
+                const parsedData = JSON.parse(event.data);
+                if(!parsedData.error){
+                    parsedData.error = { name: 'system_error', message: 'Something wrong'};
+                }
+                cb(parsedData);
+            } catch(error){
+                console.log(error);
+                cb({error: { name: 'system_error', message: 'Something wrong'}});
+            }
         };
         events.onmessage = (event) => {
             //console.log(event);
-            const parsedData = JSON.parse(event.data);
-            cb(parsedData);
+            try{
+                const parsedData = JSON.parse(event.data);
+                cb(parsedData);
+            } catch(error){
+                console.log(error);
+                cb({error: { name: 'system_error', message: 'Something wrong'}});
+            }
         };
         return events;
     }
