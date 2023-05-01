@@ -369,11 +369,25 @@ class Direcauth extends Direcbase {
       return undefined;
     }
   }
+  async refreshToken(body, headers) {
+    const {
+      tokens
+    } = await this.runner.run('auth/refresh', body, headers);
+    if (tokens) {
+      if (!isServer()) {
+        localStorage.setItem("token", tokens.access.token);
+        localStorage.setItem("tokenRefresh", tokens.refresh.token);
+      }
+      return tokens;
+    } else {
+      return undefined;
+    }
+  }
   async logout(headers) {
     const result = await this.runner.run('auth/logout', {}, headers);
     if (!isServer() && result) {
-      localStorage.setItem("token", tokens.access.token);
-      localStorage.setItem("tokenRefresh", tokens.refresh.token);
+      localStorage.removeItem("token");
+      localStorage.removeItem("tokenRefresh");
     }
     return result;
   }
