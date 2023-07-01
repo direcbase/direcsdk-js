@@ -1,6 +1,6 @@
 {
   "name": "direcbase",
-  "version": "0.0.9-alpha",
+  "version": "0.0.9",
   "description": "Direcbase Javascript SDK",
   "main": "./dist/direcbase.mjs",
   "module": "./dist/direcbase.mjs",
@@ -20,7 +20,7 @@
     "query"
   ],
   "author": "Hau Le",
-  "license": "BSD-3",
+  "license": "MIT",
   "dependencies": {
     "array-flatten": "^3.0.0",
     "eventsource": "^2.0.2"

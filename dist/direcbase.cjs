@@ -96,6 +96,11 @@ class FnRunner {
     const result = await this.client.fx(path, body, headers);
     return result;
   }
+  async sub(path, params, cb) {
+    //let path =  `adm/${fx}`  ;
+    const result = await this.client.onEvent(path, params, cb);
+    return result;
+  }
 }
 class Query {
   constructor() {}
@@ -474,6 +479,9 @@ class Direccall extends Direcbase {
   }
   async run(fxname, body, headers) {
     return await this.runner.run(`fx/${fxname}`, body, headers);
+  }
+  async sub(fxname, params, cb) {
+    return await this.runner.sub(`fx/${fxname}`, params, cb);
   }
 }
 const direcstore = new Direcstore();
