@@ -15,6 +15,7 @@ function validSet(set){
     }
     return true;
 }
+
 function validWhere(left, opr, right){
     if(typeof left !== "string" || typeof opr !== "string"){
         return false;
@@ -235,6 +236,12 @@ class Client {
         let token;
         if(!isServer()){
             token = localStorage.getItem('token');
+        }else{
+            let {context} = body;
+            if(context){
+                token = context.token;
+                options.headers['x-access-key'] = context.appKey;
+            }
         }
         if(token){
             options.headers['Authorization'] = `Bearer ${token}`;
@@ -377,6 +384,32 @@ export class Direcauth extends Direcbase{
             return undefined;
         }
     }
+    
+    async loginAnonymously(body, headers){
+        const {tokens} = await this.runner.run('auth/loginanonymously', body, headers);
+        if(tokens){
+            if(!isServer()){
+                localStorage.setItem("token", tokens.access.token);
+                localStorage.setItem("tokenRefresh", tokens.refresh.token);
+            }
+            return tokens;
+        } else {
+            return undefined;
+        }
+    }
+
+    async loginMagic(body, headers){
+        const {tokens} = await this.runner.run('auth/loginmagic', body, headers);
+        if(tokens){
+            if(!isServer()){
+                localStorage.setItem("token", tokens.access.token);
+                localStorage.setItem("tokenRefresh", tokens.refresh.token);
+            }
+            return tokens;
+        } else {
+            return undefined;
+        }
+    }
 
     async refreshToken(body, headers){
         const {tokens} = await this.runner.run('auth/refresh', body, headers);
@@ -402,6 +435,10 @@ export class Direcauth extends Direcbase{
 
     async validateToken(headers){
         return await this.runner.run('auth/validtoken', {}, headers);
+    }
+
+    async onetimeToken(body, headers){
+        return await this.runner.run('auth/onetimetoken', body, headers);
     }
 
 }
@@ -469,13 +506,16 @@ export const DELETE = function(...args){
 }
 
 export class Direccall extends Direcbase{
-    constructor(runner) {
+    constructor(runner, context) {
         let initRunner
         if (!runner) initRunner = new FnRunner();else initRunner = runner;
-        super(initRunner);
+        super(initRunner, context);
     }
 
     async run(fxname, body, headers){
+        if(this.context && this.context.token){
+            headers['Authorization'] = `Bearer ${this.context.token}`;
+        }
         return await this.runner.run(`fx/${fxname}`, body, headers);
     }
     async sub(fxname, params, cb){

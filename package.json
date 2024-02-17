@@ -1,6 +1,6 @@
 {
   "name": "direcbase",
-  "version": "0.0.9",
+  "version": "0.0.15",
   "description": "Direcbase Javascript SDK",
   "main": "./dist/direcbase.mjs",
   "module": "./dist/direcbase.mjs",

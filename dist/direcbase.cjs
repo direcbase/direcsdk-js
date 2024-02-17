@@ -251,6 +251,14 @@ class Client {
     let token;
     if (!isServer()) {
       token = localStorage.getItem('token');
+    } else {
+      let {
+        context
+      } = body;
+      if (context) {
+        token = context.token;
+        options.headers['x-access-key'] = context.appKey;
+      }
     }
     if (token) {
       options.headers['Authorization'] = `Bearer ${token}`;
@@ -387,6 +395,34 @@ class Direcauth extends Direcbase {
       return undefined;
     }
   }
+  async loginAnonymously(body, headers) {
+    const {
+      tokens
+    } = await this.runner.run('auth/loginanonymously', body, headers);
+    if (tokens) {
+      if (!isServer()) {
+        localStorage.setItem("token", tokens.access.token);
+        localStorage.setItem("tokenRefresh", tokens.refresh.token);
+      }
+      return tokens;
+    } else {
+      return undefined;
+    }
+  }
+  async loginMagic(body, headers) {
+    const {
+      tokens
+    } = await this.runner.run('auth/loginmagic', body, headers);
+    if (tokens) {
+      if (!isServer()) {
+        localStorage.setItem("token", tokens.access.token);
+        localStorage.setItem("tokenRefresh", tokens.refresh.token);
+      }
+      return tokens;
+    } else {
+      return undefined;
+    }
+  }
   async refreshToken(body, headers) {
     const {
       tokens
@@ -411,6 +447,9 @@ class Direcauth extends Direcbase {
   }
   async validateToken(headers) {
     return await this.runner.run('auth/validtoken', {}, headers);
+  }
+  async onetimeToken(body, headers) {
+    return await this.runner.run('auth/onetimetoken', body, headers);
   }
 }
 class Direcadmin extends Direcbase {
@@ -472,12 +511,15 @@ const DELETE = function (...args) {
   return new Delete(...args);
 };
 class Direccall extends Direcbase {
-  constructor(runner) {
+  constructor(runner, context) {
     let initRunner;
     if (!runner) initRunner = new FnRunner();else initRunner = runner;
-    super(initRunner);
+    super(initRunner, context);
   }
   async run(fxname, body, headers) {
+    if (this.context && this.context.token) {
+      headers['Authorization'] = `Bearer ${this.context.token}`;
+    }
     return await this.runner.run(`fx/${fxname}`, body, headers);
   }
   async sub(fxname, params, cb) {
